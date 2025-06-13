@@ -1,0 +1,27 @@
+// FILE: manifest.json
+// This file is the heart of the Chrome extension. It defines the extension's
+// properties, permissions, and the files it uses.
+
+{
+  "manifest_version": 3,
+  "name": "Gemini PDF Assistant",
+  "version": "0.1.0",
+  "description": "Highlight text in PDFs to ask questions and get answers from Gemini.",
+  "permissions": [
+    "storage", // To store chat history
+    "contextMenus", // To add the "Ask Gemini" right-click option
+    "declarativeNetRequest" // To redirect PDFs to our custom viewer
+  ],
+  "host_permissions": [
+    "<all_urls>" // Required by declarativeNetRequest to act on all pages
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["viewer.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
