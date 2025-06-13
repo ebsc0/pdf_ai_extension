@@ -73,7 +73,40 @@ body {
   padding: 20px;
 }
 
-#pdf-canvas {
+#pdf-container {
+  position: relative;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pdf-canvas {
   background-color: white;
+  display: block;
+}
+
+#text-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 0.2;
+  line-height: 1.0;
+  pointer-events: auto;
+}
+
+#text-layer > span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+#text-layer ::selection {
+  background: rgba(0, 0, 255, 0.3);
+}
+
+#text-layer ::-moz-selection {
+  background: rgba(0, 0, 255, 0.3);
 }

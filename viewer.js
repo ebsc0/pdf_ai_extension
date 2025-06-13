@@ -18,6 +18,12 @@ function renderPage(num) {
     canvas.style.width = (viewport.width / resolution) + 'px';
     canvas.style.height = (viewport.height / resolution) + 'px';
 
+    // Clear existing text layer
+    const textLayerDiv = document.getElementById('text-layer');
+    textLayerDiv.innerHTML = '';
+    textLayerDiv.style.width = canvas.style.width;
+    textLayerDiv.style.height = canvas.style.height;
+
     const renderContext = {
       canvasContext: ctx,
       viewport: viewport
@@ -25,6 +31,19 @@ function renderPage(num) {
     const renderTask = page.render(renderContext);
 
     renderTask.promise.then(function() {
+      // Render text layer
+      return page.getTextContent();
+    }).then(function(textContent) {
+      const textLayerViewport = page.getViewport({ scale: scale });
+      
+      // Create text layer
+      pdfjsLib.renderTextLayer({
+        textContent: textContent,
+        container: textLayerDiv,
+        viewport: textLayerViewport,
+        textDivs: []
+      });
+
       pageRendering = false;
       if (pageNumPending !== null) {
         renderPage(pageNumPending);

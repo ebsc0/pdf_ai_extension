@@ -33,3 +33,7 @@
 - Implemented 5 resolution options: Low (0.5x), Normal (1x), High (1.5x), Very High (2x), Ultra (3x)
 - Resolution scaling improves PDF rendering quality while maintaining display size
 - Higher resolutions provide sharper text and images for better readability
+- Enabled PDF text selection functionality
+- Added text layer rendering on top of canvas
+- Implemented transparent text layer for native selection behavior
+- Added CSS styling for text selection highlight
