@@ -20,5 +20,8 @@
       "resources": ["viewer.html", "viewer.css", "viewer.js"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' https://cdnjs.cloudflare.com; object-src 'self'"
+  }
 }
