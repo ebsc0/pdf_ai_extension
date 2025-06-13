@@ -21,3 +21,9 @@
 - Updated manifest.json permissions to use declarativeNetRequest
 - Rewrote background.js to use webNavigation API for PDF detection
 - Removed blocking webRequest listeners in favor of navigation-based interception
+
+### Bug Fixes
+- Fixed infinite refresh loop in PDF viewer
+- Added check to prevent re-triggering navigation events on viewer.html itself
+- Implemented tab tracking to prevent multiple redirects for the same PDF
+- Added cleanup for tracked tabs when they're closed
