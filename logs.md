@@ -60,18 +60,9 @@
 - Highlights now scale properly with page zoom maintaining position on text
 - Adjusted comment pane width to 33.33% of screen (1/3) with min/max constraints
 
-### Continuous Scroll Implementation
-- Replaced single-page view with continuous vertical scroll
-- Implemented virtual scrolling for performance with large PDFs
-- Only renders visible pages plus buffer (3 pages before/after)
-- Automatically loads/unloads pages as user scrolls
-- Navigation buttons now smoothly scroll to pages
-- Page indicator updates based on scroll position
-- Comments and highlights work seamlessly with continuous scroll
-- Zoom maintains scroll position proportionally
-- Optimized memory usage by cleaning up off-screen pages
-- Fixed resize handling for continuous scroll view
-- Added debounced resize event listener (250ms delay)
-- Recalculates page dimensions and positions on window resize
-- Maintains proportional scroll position during resize
-- Forces re-render of all visible pages with new dimensions
+### Reverted to Single-Page View
+- Removed continuous scroll implementation
+- Restored original single-page PDF viewing
+- Navigation uses Previous/Next buttons for page changes
+- Maintained all comment and highlighting functionality
+- Preserved text selection and zoom features
