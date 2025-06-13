@@ -91,3 +91,237 @@ body {
 #text-layer ::-moz-selection {
   background: rgba(0, 0, 255, 0.3);
 }
+
+/* Main content layout */
+#main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Comment pane styles */
+#comment-pane {
+  width: 300px;
+  background-color: #f5f5f5;
+  border-left: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+}
+
+#comment-pane.collapsed {
+  width: 40px;
+}
+
+#comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-bottom: 1px solid #ccc;
+}
+
+#comment-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+#toggle-comments {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #666;
+  transition: transform 0.3s ease;
+}
+
+#comment-pane.collapsed #toggle-comments {
+  transform: rotate(180deg);
+}
+
+#comment-pane.collapsed #comment-header h3,
+#comment-pane.collapsed #comment-list {
+  display: none;
+}
+
+#comment-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Highlight layer styles */
+#highlight-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.text-highlight {
+  position: absolute;
+  background-color: rgba(255, 235, 59, 0.4);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 0.2s ease;
+}
+
+.text-highlight:hover {
+  background-color: rgba(255, 235, 59, 0.6);
+}
+
+.text-highlight.active {
+  background-color: rgba(255, 193, 7, 0.5);
+}
+
+/* Comment tooltip styles */
+#comment-tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+#add-comment-btn {
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#add-comment-btn:hover {
+  background-color: #45a049;
+}
+
+/* Comment dialog styles */
+#comment-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  min-width: 300px;
+}
+
+#comment-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+#comment-dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#comment-dialog-buttons button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#comment-save {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#comment-save:hover {
+  background-color: #45a049;
+}
+
+#comment-cancel {
+  background-color: #f44336;
+  color: white;
+}
+
+#comment-cancel:hover {
+  background-color: #da190b;
+}
+
+/* Comment item styles */
+.comment-thread {
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.comment-thread-header {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.comment-thread-header:hover {
+  background-color: #f0f0f0;
+}
+
+.highlighted-text {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.comment-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-meta {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.comment-actions {
+  margin-top: 5px;
+}
+
+.reply-btn {
+  font-size: 12px;
+  color: #4CAF50;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+
+.reply-btn:hover {
+  text-decoration: underline;
+}

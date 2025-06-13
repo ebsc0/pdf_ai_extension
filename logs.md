@@ -44,3 +44,15 @@
 - Simplified user interface by removing resolution complexity
 - Fixed text layer alignment to properly match rendered text
 - Added --scale-factor CSS variable to text layer for proper text positioning
+
+### Comment Feature Implementation
+- Added comment pane on the right side with collapsible UI
+- Implemented text selection highlighting functionality
+- Users can select text and click "Add Comment" to start a comment thread
+- Each highlighted text creates a unique comment chain
+- Comment threads support replies for discussion
+- Highlights are displayed with yellow background on the PDF
+- Comments persist using Chrome storage API
+- Clicking on highlights or comment threads navigates to the relevant page
+- Comment pane shows highlighted text snippet and page number
+- Full comment history with timestamps for each comment

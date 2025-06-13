@@ -17,10 +17,36 @@
       <span id="zoom-level">100%</span>
       <button id="zoom-in">+</button>
     </div>
-    <div id="canvas-container">
-      <div id="pdf-container">
-        <canvas id="pdf-canvas"></canvas>
-        <div id="text-layer"></div>
+    <div id="main-content">
+      <div id="canvas-container">
+        <div id="pdf-container">
+          <canvas id="pdf-canvas"></canvas>
+          <div id="text-layer"></div>
+          <div id="highlight-layer"></div>
+        </div>
+      </div>
+      <div id="comment-pane">
+        <div id="comment-header">
+          <h3>Comments</h3>
+          <button id="toggle-comments" title="Toggle Comments">▶</button>
+        </div>
+        <div id="comment-list"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Comment tooltip for adding new comments -->
+  <div id="comment-tooltip" style="display: none;">
+    <button id="add-comment-btn">Add Comment</button>
+  </div>
+  
+  <!-- Comment dialog for creating/replying to comments -->
+  <div id="comment-dialog" style="display: none;">
+    <div id="comment-dialog-content">
+      <textarea id="comment-input" placeholder="Type your comment..."></textarea>
+      <div id="comment-dialog-buttons">
+        <button id="comment-save">Save</button>
+        <button id="comment-cancel">Cancel</button>
       </div>
     </div>
   </div>
