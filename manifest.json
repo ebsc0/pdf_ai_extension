@@ -4,9 +4,11 @@
   "version": "1.0",
   "description": "View PDF files using PDF.js",
   "permissions": [
-    "webRequest",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
     "webNavigation",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "host_permissions": [
     "<all_urls>"
