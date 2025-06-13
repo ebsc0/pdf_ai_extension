@@ -37,3 +37,9 @@
 - Added text layer rendering on top of canvas
 - Implemented transparent text layer for native selection behavior
 - Added CSS styling for text selection highlight
+
+### Improvements
+- Removed resolution dropdown selector from UI
+- Set default resolution to Very High (2x) for better text quality
+- Simplified user interface by removing resolution complexity
+- Fixed text layer alignment to properly match rendered text

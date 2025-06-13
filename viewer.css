@@ -44,25 +44,6 @@ body {
   font-size: 14px;
 }
 
-#resolution-select {
-  padding: 5px 10px;
-  background-color: #4a4d50;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-left: 10px;
-}
-
-#resolution-select:hover {
-  background-color: #5a5d60;
-}
-
-#resolution-select:focus {
-  outline: none;
-  background-color: #5a5d60;
-}
 
 #canvas-container {
   flex: 1;

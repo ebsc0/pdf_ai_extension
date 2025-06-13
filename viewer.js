@@ -5,7 +5,7 @@ let pageNum = 1;
 let pageRendering = false;
 let pageNumPending = null;
 let scale = 1.0;
-let resolution = 1.0;
+const resolution = 2.0; // Default to Very High quality
 const canvas = document.getElementById('pdf-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -96,17 +96,10 @@ function updateZoomLevel() {
   document.getElementById('zoom-level').textContent = Math.round(scale * 100) + '%';
 }
 
-function onResolutionChange() {
-  const select = document.getElementById('resolution-select');
-  resolution = parseFloat(select.value);
-  queueRenderPage(pageNum);
-}
-
 document.getElementById('prev-page').addEventListener('click', onPrevPage);
 document.getElementById('next-page').addEventListener('click', onNextPage);
 document.getElementById('zoom-in').addEventListener('click', onZoomIn);
 document.getElementById('zoom-out').addEventListener('click', onZoomOut);
-document.getElementById('resolution-select').addEventListener('change', onResolutionChange);
 
 const urlParams = new URLSearchParams(window.location.search);
 const fileUrl = urlParams.get('file');
