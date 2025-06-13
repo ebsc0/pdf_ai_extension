@@ -70,3 +70,8 @@
 - Comments and highlights work seamlessly with continuous scroll
 - Zoom maintains scroll position proportionally
 - Optimized memory usage by cleaning up off-screen pages
+- Fixed resize handling for continuous scroll view
+- Added debounced resize event listener (250ms delay)
+- Recalculates page dimensions and positions on window resize
+- Maintains proportional scroll position during resize
+- Forces re-render of all visible pages with new dimensions

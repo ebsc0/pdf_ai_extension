@@ -66,6 +66,7 @@ async function calculatePageDimensions() {
 
 function setupScrollContainer() {
   const scrollContainer = document.getElementById('scroll-container');
+  scrollContainer.innerHTML = ''; // Clear existing content
   scrollContainer.style.height = totalHeight + 'px';
   scrollContainer.style.position = 'relative';
   
@@ -245,6 +246,13 @@ function setupEventListeners() {
     scrollTimeout = setTimeout(updateVisiblePages, 100);
   });
   
+  // Resize event with debouncing
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(handleResize, 250);
+  });
+  
   // Navigation buttons
   document.getElementById('prev-page').addEventListener('click', () => {
     scrollToPage(Math.max(1, currentPage - 1));
@@ -295,6 +303,30 @@ function scrollToPage(pageNum) {
     top: targetTop,
     behavior: 'smooth'
   });
+}
+
+async function handleResize() {
+  const container = document.getElementById('canvas-container');
+  
+  // Save current page position
+  const scrollRatio = container.scrollTop / totalHeight;
+  
+  // Clear all rendered pages to force re-render with new dimensions
+  Object.keys(pageStates).forEach(pageNum => {
+    cleanupPage(parseInt(pageNum));
+  });
+  
+  // Recalculate page dimensions
+  await calculatePageDimensions();
+  
+  // Rebuild scroll container
+  setupScrollContainer();
+  
+  // Restore scroll position
+  container.scrollTop = scrollRatio * totalHeight;
+  
+  // Re-render visible pages
+  updateVisiblePages();
 }
 
 // Comment system functions
