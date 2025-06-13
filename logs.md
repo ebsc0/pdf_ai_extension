@@ -58,3 +58,4 @@
 - Full comment history with timestamps for each comment
 - Fixed highlight displacement on zoom/resize by using percentage-based positioning
 - Highlights now scale properly with page zoom maintaining position on text
+- Adjusted comment pane width to 33.33% of screen (1/3) with min/max constraints
