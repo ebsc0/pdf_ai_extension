@@ -43,3 +43,4 @@
 - Set default resolution to Very High (2x) for better text quality
 - Simplified user interface by removing resolution complexity
 - Fixed text layer alignment to properly match rendered text
+- Added --scale-factor CSS variable to text layer for proper text positioning

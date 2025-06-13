@@ -23,6 +23,9 @@ function renderPage(num) {
     textLayerDiv.innerHTML = '';
     textLayerDiv.style.width = canvas.style.width;
     textLayerDiv.style.height = canvas.style.height;
+    
+    // Set the --scale-factor CSS variable for proper text alignment
+    textLayerDiv.style.setProperty('--scale-factor', scale);
 
     const renderContext = {
       canvasContext: ctx,
