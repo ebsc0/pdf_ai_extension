@@ -17,8 +17,10 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "PDF.js Viewer"
+    "default_title": "PDF.js Viewer",
+    "default_popup": "settings.html"
   },
+  "options_page": "settings.html",
   "web_accessible_resources": [
     {
       "resources": ["viewer.html", "viewer.js", "viewer.css", "lib/*"],

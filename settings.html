@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PDF AI Extension Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    <h1>PDF AI Extension Settings</h1>
+    
+    <div class="settings-section">
+      <h2>Gemini AI Configuration</h2>
+      
+      <div class="form-group">
+        <label for="api-key">API Key</label>
+        <div class="input-group">
+          <input type="password" id="api-key" placeholder="Enter your Gemini API key">
+          <button id="toggle-visibility" class="icon-button">👁️</button>
+        </div>
+        <small class="help-text">
+          Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>
+        </small>
+      </div>
+      
+      <div class="form-group">
+        <label for="model-select">Model</label>
+        <select id="model-select">
+          <option value="gemini-pro">Gemini Pro</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+        </select>
+        <small class="help-text">Choose the AI model for responses</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="include-context">
+          <input type="checkbox" id="include-context" checked>
+          Include highlighted text as context
+        </label>
+        <small class="help-text">Provides the AI with the PDF text you highlighted</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="include-thread">
+          <input type="checkbox" id="include-thread">
+          Include comment thread history
+        </label>
+        <small class="help-text">Gives the AI context from previous comments in the thread</small>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h2>Usage & Limits</h2>
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Requests Today:</span>
+          <span id="requests-today" class="stat-value">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Requests:</span>
+          <span id="total-requests" class="stat-value">0</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="button-group">
+      <button id="save-settings" class="primary-button">Save Settings</button>
+      <button id="test-connection" class="secondary-button">Test Connection</button>
+      <button id="clear-data" class="danger-button">Clear All Data</button>
+    </div>
+    
+    <div id="status-message" class="status-message"></div>
+  </div>
+  
+  <script src="settings.js"></script>
+</body>
+</html>

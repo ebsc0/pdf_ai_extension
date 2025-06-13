@@ -66,3 +66,18 @@
 - Navigation uses Previous/Next buttons for page changes
 - Maintained all comment and highlighting functionality
 - Preserved text selection and zoom features
+
+### Gemini AI Integration
+- Added settings page for API key configuration and model selection
+- Users can access settings via extension popup
+- Implemented secure API key storage using Chrome storage
+- Created Gemini API module for handling AI requests
+- Added @gemini mention feature in comments
+- AI responses appear as replies in comment threads
+- Includes highlighted PDF text as context when enabled
+- Option to include comment thread history for context
+- Visual indicators for AI requests and responses
+- Loading states and error handling for API calls
+- Usage tracking with daily and total request counters
+- Test connection feature to validate API key
+- Special styling for AI-generated comments

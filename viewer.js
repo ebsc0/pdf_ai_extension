@@ -200,7 +200,7 @@ function hideCommentDialog() {
   hideCommentTooltip();
 }
 
-function saveComment() {
+async function saveComment() {
   const commentText = document.getElementById('comment-input').value.trim();
   if (!commentText) return;
   
@@ -208,10 +208,20 @@ function saveComment() {
   const parentId = dialog.dataset.parentId;
   const highlightId = dialog.dataset.highlightId;
   
+  // Check if this is an AI request
+  const isAIRequest = commentText.toLowerCase().startsWith('@gemini');
+  
   if (!parentId && selectedText) {
     // Create new comment thread with highlight
     const commentId = 'comment_' + Date.now();
     const highlight = createHighlight(selectedText);
+    
+    const newComment = {
+      id: 'reply_' + Date.now(),
+      text: commentText,
+      timestamp: new Date().toISOString(),
+      isAIRequest: isAIRequest
+    };
     
     comments[commentId] = {
       id: commentId,
@@ -219,28 +229,93 @@ function saveComment() {
       highlightedText: selectedText.text,
       pageNum: selectedText.pageNum,
       bounds: highlight.bounds,
-      comments: [{
-        id: 'reply_' + Date.now(),
-        text: commentText,
-        timestamp: new Date().toISOString()
-      }]
+      comments: [newComment]
     };
     
     window.getSelection().removeAllRanges();
+    
+    // Process AI request if needed
+    if (isAIRequest) {
+      await processAIComment(commentId, newComment, selectedText.text);
+    }
+    
     selectedText = null;
   } else if (parentId && comments[parentId]) {
     // Add reply to existing thread
-    comments[parentId].comments.push({
+    const newComment = {
       id: 'reply_' + Date.now(),
       text: commentText,
-      timestamp: new Date().toISOString()
-    });
+      timestamp: new Date().toISOString(),
+      isAIRequest: isAIRequest
+    };
+    
+    comments[parentId].comments.push(newComment);
+    
+    // Process AI request if needed
+    if (isAIRequest) {
+      await processAIComment(parentId, newComment, comments[parentId].highlightedText);
+    }
   }
   
   saveComments();
   renderHighlights();
   renderCommentList();
   hideCommentDialog();
+}
+
+async function processAIComment(threadId, comment, context) {
+  // Extract prompt from @gemini mention
+  const prompt = comment.text.replace(/^@gemini\s*/i, '').trim();
+  
+  if (!prompt) {
+    addAIResponse(threadId, 'Please provide a question after @gemini');
+    return;
+  }
+  
+  // Update comment to show pending state
+  comment.aiStatus = 'pending';
+  renderCommentList();
+  
+  try {
+    // Get thread history
+    const threadHistory = comments[threadId].comments
+      .filter(c => !c.isAIRequest && c.id !== comment.id)
+      .map(c => ({ text: c.text, timestamp: new Date(c.timestamp).toLocaleString() }));
+    
+    // Send request to background script
+    const response = await chrome.runtime.sendMessage({
+      action: 'generateAIResponse',
+      prompt: prompt,
+      context: context,
+      threadHistory: threadHistory
+    });
+    
+    if (response.success) {
+      addAIResponse(threadId, response.content);
+      comment.aiStatus = 'completed';
+    } else {
+      addAIResponse(threadId, `Error: ${response.error}`, true);
+      comment.aiStatus = 'error';
+    }
+  } catch (error) {
+    addAIResponse(threadId, `Error: ${error.message}`, true);
+    comment.aiStatus = 'error';
+  }
+  
+  saveComments();
+  renderCommentList();
+}
+
+function addAIResponse(threadId, responseText, isError = false) {
+  if (!comments[threadId]) return;
+  
+  comments[threadId].comments.push({
+    id: 'ai_reply_' + Date.now(),
+    text: responseText,
+    timestamp: new Date().toISOString(),
+    isAIResponse: true,
+    isError: isError
+  });
 }
 
 function createHighlight(selection) {
@@ -318,14 +393,45 @@ function renderCommentList() {
     const commentsContainer = document.createElement('div');
     thread.comments.forEach(comment => {
       const commentDiv = document.createElement('div');
-      commentDiv.className = 'comment-item';
+      
+      // Add appropriate classes based on comment type
+      let className = 'comment-item';
+      if (comment.isAIResponse) {
+        className += ' ai-response';
+      }
+      if (comment.isAIRequest) {
+        className += ' ai-request';
+      }
+      if (comment.isError) {
+        className += ' ai-error';
+      }
+      commentDiv.className = className;
+      
+      // Build comment HTML
+      let metaText = new Date(comment.timestamp).toLocaleString();
+      if (comment.isAIResponse) {
+        metaText = '🤖 Gemini • ' + metaText;
+      }
+      if (comment.aiStatus === 'pending') {
+        metaText += ' • Generating response...';
+      }
+      
       commentDiv.innerHTML = `
-        <div class="comment-meta">${new Date(comment.timestamp).toLocaleString()}</div>
-        <div class="comment-text">${comment.text}</div>
+        <div class="comment-meta">${metaText}</div>
+        <div class="comment-text">${escapeHtml(comment.text)}</div>
         <div class="comment-actions">
-          <button class="reply-btn" data-thread-id="${thread.id}">Reply</button>
+          ${!comment.isAIResponse ? `<button class="reply-btn" data-thread-id="${thread.id}">Reply</button>` : ''}
         </div>
       `;
+      
+      // Add loading spinner for pending AI requests
+      if (comment.aiStatus === 'pending') {
+        const spinner = document.createElement('div');
+        spinner.className = 'ai-loading';
+        spinner.innerHTML = '<div class="spinner"></div>';
+        commentDiv.appendChild(spinner);
+      }
+      
       commentsContainer.appendChild(commentDiv);
     });
     
@@ -374,6 +480,13 @@ function saveComments() {
     allComments[fileUrl] = comments;
     chrome.storage.local.set({ comments: allComments });
   });
+}
+
+// Helper function to escape HTML
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Update renderPage to also render highlights
