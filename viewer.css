@@ -47,24 +47,38 @@ body {
 
 #canvas-container {
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #525659;
+}
+
+#scroll-container {
+  position: relative;
+  margin: 0 auto;
+  width: fit-content;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Page container styles */
+.page-container {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
+  align-items: center;
 }
 
-#pdf-container {
-  position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-#pdf-canvas {
+.page-container canvas {
   background-color: white;
   display: block;
 }
 
-#text-layer {
+.page-container .text-layer {
   position: absolute;
   left: 0;
   top: 0;
@@ -76,7 +90,7 @@ body {
   pointer-events: auto;
 }
 
-#text-layer > span {
+.page-container .text-layer > span {
   color: transparent;
   position: absolute;
   white-space: pre;
@@ -84,12 +98,22 @@ body {
   transform-origin: 0% 0%;
 }
 
-#text-layer ::selection {
+.page-container .text-layer ::selection {
   background: rgba(0, 0, 255, 0.3);
 }
 
-#text-layer ::-moz-selection {
+.page-container .text-layer ::-moz-selection {
   background: rgba(0, 0, 255, 0.3);
+}
+
+/* Highlight layer styles for continuous scroll */
+.page-container .highlight-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
 }
 
 /* Main content layout */
@@ -154,15 +178,6 @@ body {
   padding: 10px;
 }
 
-/* Highlight layer styles */
-#highlight-layer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
 
 .text-highlight {
   position: absolute;
