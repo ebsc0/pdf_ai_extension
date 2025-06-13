@@ -56,3 +56,5 @@
 - Clicking on highlights or comment threads navigates to the relevant page
 - Comment pane shows highlighted text snippet and page number
 - Full comment history with timestamps for each comment
+- Fixed highlight displacement on zoom/resize by using percentage-based positioning
+- Highlights now scale properly with page zoom maintaining position on text

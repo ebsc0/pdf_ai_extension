@@ -26,6 +26,11 @@ function renderPage(num) {
     
     // Set the --scale-factor CSS variable for proper text alignment
     textLayerDiv.style.setProperty('--scale-factor', scale);
+    
+    // Clear and update highlight layer dimensions
+    const highlightLayer = document.getElementById('highlight-layer');
+    highlightLayer.style.width = canvas.style.width;
+    highlightLayer.style.height = canvas.style.height;
 
     const renderContext = {
       canvasContext: ctx,
@@ -242,13 +247,15 @@ function createHighlight(selection) {
   const highlightId = 'highlight_' + Date.now();
   const container = document.getElementById('pdf-container');
   const containerRect = container.getBoundingClientRect();
+  const canvasWidth = parseFloat(canvas.style.width);
+  const canvasHeight = parseFloat(canvas.style.height);
   
-  // Calculate bounds relative to PDF container
+  // Calculate bounds as percentages of canvas size for scale-independent positioning
   const bounds = {
-    left: selection.rect.left - containerRect.left,
-    top: selection.rect.top - containerRect.top,
-    width: selection.rect.width,
-    height: selection.rect.height
+    left: ((selection.rect.left - containerRect.left) / canvasWidth) * 100,
+    top: ((selection.rect.top - containerRect.top) / canvasHeight) * 100,
+    width: (selection.rect.width / canvasWidth) * 100,
+    height: (selection.rect.height / canvasHeight) * 100
   };
   
   return {
@@ -261,15 +268,24 @@ function renderHighlights() {
   const highlightLayer = document.getElementById('highlight-layer');
   highlightLayer.innerHTML = '';
   
+  // Set highlight layer dimensions to match canvas
+  highlightLayer.style.width = canvas.style.width;
+  highlightLayer.style.height = canvas.style.height;
+  
+  const canvasWidth = parseFloat(canvas.style.width);
+  const canvasHeight = parseFloat(canvas.style.height);
+  
   Object.values(comments).forEach(thread => {
     if (thread.pageNum === pageNum) {
       const highlight = document.createElement('div');
       highlight.className = 'text-highlight';
       highlight.id = thread.highlightId;
-      highlight.style.left = thread.bounds.left + 'px';
-      highlight.style.top = thread.bounds.top + 'px';
-      highlight.style.width = thread.bounds.width + 'px';
-      highlight.style.height = thread.bounds.height + 'px';
+      
+      // Apply percentage-based positioning that scales with canvas
+      highlight.style.left = thread.bounds.left + '%';
+      highlight.style.top = thread.bounds.top + '%';
+      highlight.style.width = thread.bounds.width + '%';
+      highlight.style.height = thread.bounds.height + '%';
       
       highlight.addEventListener('click', function() {
         setActiveHighlight(thread.id);
