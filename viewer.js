@@ -19,13 +19,16 @@ let currentContext = "";
 // Function to load and render the PDF
 async function renderPDF(url) {
   try {
+    // PDF.js can have trouble with remote URLs due to CORS policy.
+    // Fetching the PDF as a binary blob in the background script and passing
+    // the data to the viewer is a more robust, but more complex, solution.
     const loadingTask = pdfjsLib.getDocument({ url });
     pdfDoc = await loadingTask.promise;
     renderPage(1); // Render the first page initially
   } catch (error) {
     console.error("Error loading PDF:", error);
     pdfViewerContainer.textContent =
-      "Failed to load PDF. Please check the URL and that the server allows cross-origin requests.";
+      "Failed to load PDF. Please check the URL. Some PDFs may be blocked by security policies (CORS).";
   }
 }
 
@@ -101,7 +104,9 @@ function callGeminiAPI(context, question) {
     },
     (response) => {
       // Remove "Thinking..." message
-      chatContainer.removeChild(chatContainer.lastChild);
+      if (chatContainer.lastChild) {
+        chatContainer.removeChild(chatContainer.lastChild);
+      }
 
       if (response && response.success) {
         currentConversation.push({
@@ -142,6 +147,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     callGeminiAPI(currentContext, question);
   }
+  return true; // Keep the message channel open for asynchronous response
 });
 
 sendChatBtn.addEventListener("click", () => {
@@ -160,10 +166,13 @@ closeSidebarBtn.addEventListener("click", hideSidebar);
 document.addEventListener("DOMContentLoaded", () => {
   // Get the PDF URL from the query parameter.
   const urlParams = new URLSearchParams(window.location.search);
-  const pdfUrl = urlParams.get("pdf_url");
+  const rawPdfUrl = urlParams.get("pdf_url");
 
-  if (pdfUrl) {
-    renderPDF(decodeURIComponent(pdfUrl));
+  if (rawPdfUrl) {
+    // The URL from the redirect rule has the original URL encoded inside it.
+    // We need to decode it to get the correct, clean URL for the PDF.
+    const finalUrl = decodeURIComponent(rawPdfUrl.replace("url=", ""));
+    renderPDF(finalUrl);
   } else {
     pdfViewerContainer.textContent = "No PDF URL provided.";
   }

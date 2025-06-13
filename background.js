@@ -6,26 +6,39 @@
 // On installation, we set up a rule to redirect any direct navigation to a .pdf file
 // to our custom viewer page, viewer.html.
 chrome.runtime.onInstalled.addListener(() => {
+  const RULE_ID = 1;
   const RULE = {
-    id: 1,
+    id: RULE_ID,
     priority: 1,
     action: {
       type: "redirect",
       redirect: {
         // We construct the URL to our viewer, passing the original PDF URL as a parameter.
-        extensionPath: "/viewer.html?pdf_url=%s",
+        // This uses a transform which is more robust than string replacement.
+        transform: {
+          scheme: "chrome-extension",
+          path: "/viewer.html",
+          queryTransform: {
+            addOrReplaceParams: [
+              {
+                key: "pdf_url",
+                value: "{url}",
+              },
+            ],
+          },
+        },
       },
     },
     condition: {
-      // This rule applies to top-level navigation requests...
+      // This rule applies to top-level navigation requests for URLs ending in .pdf.
+      // It also handles URLs that might have query parameters.
       resourceTypes: ["main_frame"],
-      // ...for URLs ending in .pdf.
-      regexFilter: ".*\\.pdf(\\?.*)?$",
+      regexFilter: ".+\\.pdf(\\?.*)?$",
     },
   };
 
   chrome.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: [RULE.id],
+    removeRuleIds: [RULE_ID],
     addRules: [RULE],
   });
 
@@ -41,6 +54,7 @@ chrome.runtime.onInstalled.addListener(() => {
 // --- Gemini API Interaction ---
 // Listen for when the user clicks our context menu item.
 chrome.contextMenus.onClicked.addListener((info, tab) => {
+  // Ensure the context menu is only acting within our PDF viewer.
   if (info.menuItemId === "ask-gemini" && tab.url.includes("viewer.html")) {
     const selectedText = info.selectionText;
     // Send a message to the active viewer tab with the selected text.
@@ -55,21 +69,25 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "CALL_GEMINI_API") {
     // IMPORTANT: Replace with your actual Gemini API Key.
-    // It's recommended to have users configure this in an options page for security.
+    // For a real extension, provide an options page for users to enter their own key.
     const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const prompt = `Based on the following context from a PDF, answer the user's question.
         
-        Context: "${request.context}"
-        
-        Question: "${request.question}"
-        `;
+Context: "${request.context}"
+
+Question: "${request.question}"
+`;
 
     const payload = {
       contents: [
         {
-          parts: [{ text: prompt }],
+          parts: [
+            {
+              text: prompt,
+            },
+          ],
         },
       ],
     };
@@ -86,12 +104,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then((data) => {
         if (data.candidates && data.candidates.length > 0) {
           const text = data.candidates[0].content.parts[0].text;
-          sendResponse({ success: true, text: text });
+          sendResponse({
+            success: true,
+            text: text,
+          });
         } else {
           const errorMessage = data.error
             ? data.error.message
             : "No content received from Gemini.";
-          sendResponse({ success: false, error: errorMessage });
+          sendResponse({
+            success: false,
+            error: errorMessage,
+          });
         }
       })
       .catch((error) => {

@@ -5,25 +5,14 @@
 {
   "manifest_version": 3,
   "name": "Gemini PDF Assistant",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Highlight text in PDFs to ask questions and get answers from Gemini.",
-  "permissions": [
-    "storage", // To store chat history
-    "contextMenus", // To add the "Ask Gemini" right-click option
-    "declarativeNetRequest" // To redirect PDFs to our custom viewer
-  ],
-  "host_permissions": [
-    "<all_urls>" // Required by declarativeNetRequest to act on all pages
-  ],
+  "permissions": ["storage", "contextMenus", "declarativeNetRequest"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    },
     "default_title": "Gemini PDF Assistant"
   },
   "web_accessible_resources": [
@@ -31,10 +20,5 @@
       "resources": ["viewer.html", "viewer.css", "viewer.js"],
       "matches": ["<all_urls>"]
     }
-  ],
-  "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
-  }
+  ]
 }
