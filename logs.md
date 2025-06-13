@@ -27,3 +27,9 @@
 - Added check to prevent re-triggering navigation events on viewer.html itself
 - Implemented tab tracking to prevent multiple redirects for the same PDF
 - Added cleanup for tracked tabs when they're closed
+
+### New Features
+- Added resolution quality dropdown to PDF viewer
+- Implemented 5 resolution options: Low (0.5x), Normal (1x), High (1.5x), Very High (2x), Ultra (3x)
+- Resolution scaling improves PDF rendering quality while maintaining display size
+- Higher resolutions provide sharper text and images for better readability

@@ -5,15 +5,18 @@ let pageNum = 1;
 let pageRendering = false;
 let pageNumPending = null;
 let scale = 1.0;
+let resolution = 1.0;
 const canvas = document.getElementById('pdf-canvas');
 const ctx = canvas.getContext('2d');
 
 function renderPage(num) {
   pageRendering = true;
   pdfDoc.getPage(num).then(function(page) {
-    const viewport = page.getViewport({ scale: scale });
+    const viewport = page.getViewport({ scale: scale * resolution });
     canvas.height = viewport.height;
     canvas.width = viewport.width;
+    canvas.style.width = (viewport.width / resolution) + 'px';
+    canvas.style.height = (viewport.height / resolution) + 'px';
 
     const renderContext = {
       canvasContext: ctx,
@@ -74,10 +77,17 @@ function updateZoomLevel() {
   document.getElementById('zoom-level').textContent = Math.round(scale * 100) + '%';
 }
 
+function onResolutionChange() {
+  const select = document.getElementById('resolution-select');
+  resolution = parseFloat(select.value);
+  queueRenderPage(pageNum);
+}
+
 document.getElementById('prev-page').addEventListener('click', onPrevPage);
 document.getElementById('next-page').addEventListener('click', onNextPage);
 document.getElementById('zoom-in').addEventListener('click', onZoomIn);
 document.getElementById('zoom-out').addEventListener('click', onZoomOut);
+document.getElementById('resolution-select').addEventListener('change', onResolutionChange);
 
 const urlParams = new URLSearchParams(window.location.search);
 const fileUrl = urlParams.get('file');
