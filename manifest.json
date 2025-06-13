@@ -18,10 +18,23 @@
   "background": {
     "service_worker": "background.js"
   },
+  "action": {
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "default_title": "Gemini PDF Assistant"
+  },
   "web_accessible_resources": [
     {
-      "resources": ["viewer.html"],
+      "resources": ["viewer.html", "viewer.css", "viewer.js"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
 }

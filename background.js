@@ -13,25 +13,14 @@ chrome.runtime.onInstalled.addListener(() => {
       type: "redirect",
       redirect: {
         // We construct the URL to our viewer, passing the original PDF URL as a parameter.
-        transform: {
-          scheme: "chrome-extension",
-          path: "/viewer.html",
-          queryTransform: {
-            addOrReplaceParams: [
-              {
-                key: "pdf_url",
-                value: "{url}",
-              },
-            ],
-          },
-        },
+        extensionPath: "/viewer.html?pdf_url=%s",
       },
     },
     condition: {
       // This rule applies to top-level navigation requests...
       resourceTypes: ["main_frame"],
       // ...for URLs ending in .pdf.
-      urlFilter: ".pdf",
+      regexFilter: ".*\\.pdf(\\?.*)?$",
     },
   };
 
@@ -52,7 +41,7 @@ chrome.runtime.onInstalled.addListener(() => {
 // --- Gemini API Interaction ---
 // Listen for when the user clicks our context menu item.
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "ask-gemini") {
+  if (info.menuItemId === "ask-gemini" && tab.url.includes("viewer.html")) {
     const selectedText = info.selectionText;
     // Send a message to the active viewer tab with the selected text.
     chrome.tabs.sendMessage(tab.id, {
@@ -71,11 +60,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const prompt = `Based on the following context from a PDF, answer the user's question.
-          
-          Context: "${request.context}"
-          
-          Question: "${request.question}"
-          `;
+        
+        Context: "${request.context}"
+        
+        Question: "${request.question}"
+        `;
 
     const payload = {
       contents: [

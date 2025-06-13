@@ -19,28 +19,32 @@ let currentContext = "";
 // Function to load and render the PDF
 async function renderPDF(url) {
   try {
-    const loadingTask = pdfjsLib.getDocument(url);
+    const loadingTask = pdfjsLib.getDocument({ url });
     pdfDoc = await loadingTask.promise;
     renderPage(1); // Render the first page initially
   } catch (error) {
     console.error("Error loading PDF:", error);
     pdfViewerContainer.textContent =
-      "Failed to load PDF. Please check the URL and try again.";
+      "Failed to load PDF. Please check the URL and that the server allows cross-origin requests.";
   }
 }
 
 // Function to render a specific page
 async function renderPage(pageNum) {
-  const page = await pdfDoc.getPage(pageNum);
-  const viewport = page.getViewport({ scale: 1.5 });
-  canvas.height = viewport.height;
-  canvas.width = viewport.width;
+  try {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 1.5 });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
 
-  const renderContext = {
-    canvasContext: context,
-    viewport: viewport,
-  };
-  await page.render(renderContext).promise;
+    const renderContext = {
+      canvasContext: context,
+      viewport: viewport,
+    };
+    await page.render(renderContext).promise;
+  } catch (e) {
+    console.error("Error rendering page", e);
+  }
 }
 
 // --- Sidebar and Chat Logic ---
@@ -85,6 +89,10 @@ function addMessageToChat(message, sender, contextText = null) {
 
 // Function to call the background script's Gemini API handler
 function callGeminiAPI(context, question) {
+  addMessageToChat("Thinking...", "gemini");
+  sendChatBtn.disabled = true;
+  sendChatBtn.textContent = "Thinking...";
+
   chrome.runtime.sendMessage(
     {
       type: "CALL_GEMINI_API",
@@ -92,14 +100,18 @@ function callGeminiAPI(context, question) {
       question: question,
     },
     (response) => {
-      if (response.success) {
+      // Remove "Thinking..." message
+      chatContainer.removeChild(chatContainer.lastChild);
+
+      if (response && response.success) {
         currentConversation.push({
           role: "model",
           parts: [{ text: response.text }],
         });
         addMessageToChat(response.text, "gemini");
       } else {
-        addMessageToChat(`Error: ${response.error}`, "gemini");
+        const errorMsg = response ? response.error : "Unknown error occurred.";
+        addMessageToChat(`Error: ${errorMsg}`, "gemini");
       }
       sendChatBtn.disabled = false;
       sendChatBtn.textContent = "Send";
@@ -127,7 +139,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chatContainer.innerHTML = ""; // Clear previous chat
     showSidebar();
     addMessageToChat(question, "user", currentContext);
-    addMessageToChat("Thinking...", "gemini");
 
     callGeminiAPI(currentContext, question);
   }
@@ -138,8 +149,6 @@ sendChatBtn.addEventListener("click", () => {
   if (!question) return;
 
   addMessageToChat(question, "user");
-  sendChatBtn.disabled = true;
-  sendChatBtn.textContent = "Thinking...";
   chatInput.value = "";
 
   callGeminiAPI(currentContext, question);
