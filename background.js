@@ -22,7 +22,7 @@ chrome.runtime.onInstalled.addListener(() => {
             addOrReplaceParams: [
               {
                 key: "pdf_url",
-                value: "{url}",
+                value: "\\0",
               },
             ],
           },

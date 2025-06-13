@@ -168,10 +168,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
   const rawPdfUrl = urlParams.get("pdf_url");
 
+  console.log("Raw PDF URL:", rawPdfUrl);
+  console.log("Current URL:", window.location.href);
+
   if (rawPdfUrl) {
     // The URL from the redirect rule has the original URL encoded inside it.
-    // We need to decode it to get the correct, clean URL for the PDF.
-    const finalUrl = decodeURIComponent(rawPdfUrl.replace("url=", ""));
+    // Try to extract the actual PDF URL
+    let finalUrl = rawPdfUrl;
+    
+    // If the URL contains the pattern from the redirect
+    if (rawPdfUrl.includes("http")) {
+      // Extract the actual URL
+      const match = rawPdfUrl.match(/https?:\/\/.+\.pdf/i);
+      if (match) {
+        finalUrl = match[0];
+      }
+    }
+    
+    console.log("Final PDF URL to load:", finalUrl);
     renderPDF(finalUrl);
   } else {
     pdfViewerContainer.textContent = "No PDF URL provided.";
