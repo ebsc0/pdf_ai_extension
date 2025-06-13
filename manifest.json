@@ -17,11 +17,8 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["viewer.html", "viewer.css", "viewer.js"],
+      "resources": ["viewer.html", "viewer.css", "viewer.js", "lib/*"],
       "matches": ["<all_urls>"]
     }
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' https://cdnjs.cloudflare.com; object-src 'self'"
-  }
+  ]
 }

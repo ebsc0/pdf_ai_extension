@@ -8,12 +8,11 @@ our chat interface.
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Viewer</title>
     <link rel="stylesheet" href="viewer.css" />
-    <!-- PDF.js library from a CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <!-- PDF.js library from local files -->
+    <script src="lib/pdf.min.js"></script>
     <!-- Set worker source for PDF.js -->
     <script>
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "lib/pdf.worker.min.js";
     </script>
   </head>
   <body>
