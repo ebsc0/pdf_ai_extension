@@ -1,193 +1,94 @@
-// FILE: viewer.js
-// This script contains all the client-side logic for the viewer page.
-// It loads the PDF, handles text selection, and manages the chat sidebar UI.
-
-const pdfViewerContainer = document.getElementById("pdf-viewer-container");
-const canvas = document.getElementById("pdf-canvas");
-const context = canvas.getContext("2d");
-
-const sidebar = document.getElementById("gemini-sidebar");
-const chatContainer = document.getElementById("chat-container");
-const chatInput = document.getElementById("chat-input");
-const sendChatBtn = document.getElementById("send-chat-btn");
-const closeSidebarBtn = document.getElementById("close-sidebar-btn");
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdf.worker.min.js';
 
 let pdfDoc = null;
-let currentConversation = [];
-let currentContext = "";
+let pageNum = 1;
+let pageRendering = false;
+let pageNumPending = null;
+let scale = 1.0;
+const canvas = document.getElementById('pdf-canvas');
+const ctx = canvas.getContext('2d');
 
-// Function to load and render the PDF
-async function renderPDF(url) {
-  try {
-    // PDF.js can have trouble with remote URLs due to CORS policy.
-    // Fetching the PDF as a binary blob in the background script and passing
-    // the data to the viewer is a more robust, but more complex, solution.
-    const loadingTask = pdfjsLib.getDocument({ url });
-    pdfDoc = await loadingTask.promise;
-    renderPage(1); // Render the first page initially
-  } catch (error) {
-    console.error("Error loading PDF:", error);
-    pdfViewerContainer.textContent =
-      "Failed to load PDF. Please check the URL. Some PDFs may be blocked by security policies (CORS).";
-  }
-}
-
-// Function to render a specific page
-async function renderPage(pageNum) {
-  try {
-    const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1.5 });
+function renderPage(num) {
+  pageRendering = true;
+  pdfDoc.getPage(num).then(function(page) {
+    const viewport = page.getViewport({ scale: scale });
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
     const renderContext = {
-      canvasContext: context,
-      viewport: viewport,
+      canvasContext: ctx,
+      viewport: viewport
     };
-    await page.render(renderContext).promise;
-  } catch (e) {
-    console.error("Error rendering page", e);
-  }
+    const renderTask = page.render(renderContext);
+
+    renderTask.promise.then(function() {
+      pageRendering = false;
+      if (pageNumPending !== null) {
+        renderPage(pageNumPending);
+        pageNumPending = null;
+      }
+    });
+  });
+
+  document.getElementById('page-num').textContent = num;
 }
 
-// --- Sidebar and Chat Logic ---
-
-function showSidebar() {
-  sidebar.classList.remove("hidden");
-}
-
-function hideSidebar() {
-  sidebar.classList.add("hidden");
-}
-
-function addMessageToChat(message, sender, contextText = null) {
-  const messageElement = document.createElement("div");
-  messageElement.classList.add("chat-message", `${sender}-message`);
-
-  // If there's context, add a special block for it.
-  if (contextText) {
-    const contextElement = document.createElement("div");
-    contextElement.classList.add("context-highlight");
-    contextElement.textContent = `"${contextText}"`;
-    messageElement.appendChild(contextElement);
-  }
-
-  // Create a container for the main message content
-  const messageContent = document.createElement("div");
-
-  if (sender === "gemini") {
-    // Basic markdown parsing for bold and lists
-    let html = message.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-    html = html.replace(/^\* (.*$)/gm, "<ul><li>$1</li></ul>");
-    html = html.replace(/<\/ul>\n<ul>/g, ""); // Join adjacent lists
-    messageContent.innerHTML = html;
+function queueRenderPage(num) {
+  if (pageRendering) {
+    pageNumPending = num;
   } else {
-    messageContent.textContent = message;
+    renderPage(num);
   }
-
-  messageElement.appendChild(messageContent);
-  chatContainer.appendChild(messageElement);
-  chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
 }
 
-// Function to call the background script's Gemini API handler
-function callGeminiAPI(context, question) {
-  addMessageToChat("Thinking...", "gemini");
-  sendChatBtn.disabled = true;
-  sendChatBtn.textContent = "Thinking...";
-
-  chrome.runtime.sendMessage(
-    {
-      type: "CALL_GEMINI_API",
-      context: context,
-      question: question,
-    },
-    (response) => {
-      // Remove "Thinking..." message
-      if (chatContainer.lastChild) {
-        chatContainer.removeChild(chatContainer.lastChild);
-      }
-
-      if (response && response.success) {
-        currentConversation.push({
-          role: "model",
-          parts: [{ text: response.text }],
-        });
-        addMessageToChat(response.text, "gemini");
-      } else {
-        const errorMsg = response ? response.error : "Unknown error occurred.";
-        addMessageToChat(`Error: ${errorMsg}`, "gemini");
-      }
-      sendChatBtn.disabled = false;
-      sendChatBtn.textContent = "Send";
-    }
-  );
+function onPrevPage() {
+  if (pageNum <= 1) {
+    return;
+  }
+  pageNum--;
+  queueRenderPage(pageNum);
 }
 
-// --- Event Listeners ---
-
-// Listen for messages from the background script (from context menu)
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === "ASK_GEMINI_CONTEXT") {
-    currentContext = request.text;
-    const question = "Can you please summarize this?"; // Default question
-
-    currentConversation = [
-      {
-        role: "user",
-        parts: [
-          { text: `Context: "${currentContext}"\nQuestion: ${question}` },
-        ],
-      },
-    ];
-
-    chatContainer.innerHTML = ""; // Clear previous chat
-    showSidebar();
-    addMessageToChat(question, "user", currentContext);
-
-    callGeminiAPI(currentContext, question);
+function onNextPage() {
+  if (pageNum >= pdfDoc.numPages) {
+    return;
   }
-  return true; // Keep the message channel open for asynchronous response
-});
+  pageNum++;
+  queueRenderPage(pageNum);
+}
 
-sendChatBtn.addEventListener("click", () => {
-  const question = chatInput.value.trim();
-  if (!question) return;
+function onZoomIn() {
+  scale += 0.25;
+  updateZoomLevel();
+  queueRenderPage(pageNum);
+}
 
-  addMessageToChat(question, "user");
-  chatInput.value = "";
+function onZoomOut() {
+  if (scale <= 0.25) return;
+  scale -= 0.25;
+  updateZoomLevel();
+  queueRenderPage(pageNum);
+}
 
-  callGeminiAPI(currentContext, question);
-});
+function updateZoomLevel() {
+  document.getElementById('zoom-level').textContent = Math.round(scale * 100) + '%';
+}
 
-closeSidebarBtn.addEventListener("click", hideSidebar);
+document.getElementById('prev-page').addEventListener('click', onPrevPage);
+document.getElementById('next-page').addEventListener('click', onNextPage);
+document.getElementById('zoom-in').addEventListener('click', onZoomIn);
+document.getElementById('zoom-out').addEventListener('click', onZoomOut);
 
-// --- Initialization ---
-document.addEventListener("DOMContentLoaded", () => {
-  // Get the PDF URL from the query parameter.
-  const urlParams = new URLSearchParams(window.location.search);
-  const rawPdfUrl = urlParams.get("pdf_url");
+const urlParams = new URLSearchParams(window.location.search);
+const fileUrl = urlParams.get('file');
 
-  console.log("Raw PDF URL:", rawPdfUrl);
-  console.log("Current URL:", window.location.href);
-
-  if (rawPdfUrl) {
-    // The URL from the redirect rule has the original URL encoded inside it.
-    // Try to extract the actual PDF URL
-    let finalUrl = rawPdfUrl;
-    
-    // If the URL contains the pattern from the redirect
-    if (rawPdfUrl.includes("http")) {
-      // Extract the actual URL
-      const match = rawPdfUrl.match(/https?:\/\/.+\.pdf/i);
-      if (match) {
-        finalUrl = match[0];
-      }
-    }
-    
-    console.log("Final PDF URL to load:", finalUrl);
-    renderPDF(finalUrl);
-  } else {
-    pdfViewerContainer.textContent = "No PDF URL provided.";
-  }
-});
+if (fileUrl) {
+  pdfjsLib.getDocument(fileUrl).promise.then(function(pdfDoc_) {
+    pdfDoc = pdfDoc_;
+    document.getElementById('page-count').textContent = pdfDoc.numPages;
+    renderPage(pageNum);
+  }).catch(function(error) {
+    console.error('Error loading PDF:', error);
+    alert('Error loading PDF: ' + error.message);
+  });
+}

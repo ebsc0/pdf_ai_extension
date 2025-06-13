@@ -1,48 +1,27 @@
-// FILE: viewer.html // This is the custom page that will display the PDF and
-our chat interface.
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Viewer</title>
-    <link rel="stylesheet" href="viewer.css" />
-    <!-- PDF.js library from local files -->
-    <script src="lib/pdf.min.js"></script>
-    <!-- Set worker source for PDF.js -->
-    <script>
-      pdfjsLib.GlobalWorkerOptions.workerSrc = "lib/pdf.worker.min.js";
-    </script>
-  </head>
-  <body>
-    <!-- The main container for the application -->
-    <div id="app-container">
-      <!-- PDF will be rendered inside this container -->
-      <div id="pdf-viewer-container">
-        <canvas id="pdf-canvas"></canvas>
-      </div>
-
-      <!-- The sidebar for Gemini chat -->
-      <div id="gemini-sidebar" class="hidden">
-        <div id="sidebar-header">
-          <h3>Gemini Assistant</h3>
-          <button id="close-sidebar-btn">&times;</button>
-        </div>
-        <div id="chat-container">
-          <!-- Chat messages will be appended here -->
-        </div>
-        <div id="chat-input-container">
-          <textarea
-            id="chat-input"
-            placeholder="Ask a follow-up question..."
-          ></textarea>
-          <button id="send-chat-btn">Send</button>
-        </div>
-      </div>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Viewer</title>
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <div id="viewer-container">
+    <div id="toolbar">
+      <button id="prev-page">Previous</button>
+      <span id="page-info">
+        <span id="page-num"></span> / <span id="page-count"></span>
+      </span>
+      <button id="next-page">Next</button>
+      <button id="zoom-out">-</button>
+      <span id="zoom-level">100%</span>
+      <button id="zoom-in">+</button>
     </div>
-
-    <!-- Our custom script for the viewer -->
-    <script src="viewer.js"></script>
-  </body>
+    <div id="canvas-container">
+      <canvas id="pdf-canvas"></canvas>
+    </div>
+  </div>
+  <script src="lib/pdf.min.js"></script>
+  <script src="viewer.js"></script>
+</body>
 </html>
