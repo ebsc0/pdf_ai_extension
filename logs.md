@@ -101,3 +101,17 @@
 - Allowed safe HTML tags while removing dangerous elements (script, style, iframe, etc.)
 - Removed event handlers and dangerous attributes for security
 - Links automatically open in new tabs with security attributes
+
+### Updated Gemini Model Selection
+- Added latest Gemini 2.5 preview models to settings page:
+  - Gemini 2.5 Pro (Preview 06-05) - Latest Pro preview
+  - Gemini 2.5 Pro (Preview 05-06) - Pro preview version
+  - Gemini 2.5 Flash (Preview 05-20) - Latest Flash preview
+  - Gemini 2.5 Flash (Preview 04-17) - Flash preview version
+  - Gemini 2.0 Flash (Experimental) - Stable experimental version
+  - Gemini 1.5 Flash - Fast balanced model
+  - Gemini 1.5 Flash-8B - Lightweight version
+  - Gemini 1.5 Pro - Advanced capabilities
+  - Gemini Pro - Original model
+- Set Gemini 2.5 Flash (Preview 05-20) as default model
+- Models arranged by version and release date
