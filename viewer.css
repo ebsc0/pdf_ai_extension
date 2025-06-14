@@ -294,13 +294,20 @@ body {
 }
 
 .comment-thread-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
   background-color: #f9f9f9;
   border-bottom: 1px solid #eee;
+}
+
+.thread-info {
+  flex: 1;
   cursor: pointer;
 }
 
-.comment-thread-header:hover {
+.thread-info:hover {
   background-color: #f0f0f0;
 }
 
@@ -347,6 +354,36 @@ body {
 
 .reply-btn:hover {
   text-decoration: underline;
+}
+
+.delete-comment-btn {
+  font-size: 12px;
+  color: #f44336;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 5px;
+  margin-left: 10px;
+}
+
+.delete-comment-btn:hover {
+  text-decoration: underline;
+  color: #da190b;
+}
+
+.delete-thread-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.delete-thread-btn:hover {
+  color: #f44336;
 }
 
 /* AI-specific styles */

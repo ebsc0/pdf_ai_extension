@@ -516,10 +516,13 @@ function renderCommentList() {
     const header = document.createElement('div');
     header.className = 'comment-thread-header';
     header.innerHTML = `
-      <div class="highlighted-text">"${thread.highlightedText.substring(0, 50)}..."</div>
-      <div class="comment-meta">Page ${thread.pageNum}</div>
+      <div class="thread-info">
+        <div class="highlighted-text">"${thread.highlightedText.substring(0, 50)}..."</div>
+        <div class="comment-meta">Page ${thread.pageNum}</div>
+      </div>
+      <button class="delete-thread-btn" data-thread-id="${thread.id}" title="Delete thread">×</button>
     `;
-    header.addEventListener('click', function() {
+    header.querySelector('.thread-info').addEventListener('click', function() {
       setActiveHighlight(thread.id);
     });
     
@@ -557,6 +560,7 @@ function renderCommentList() {
         <div class="comment-text">${commentText}</div>
         <div class="comment-actions">
           ${!comment.isAIResponse ? `<button class="reply-btn" data-thread-id="${thread.id}">Reply</button>` : ''}
+          <button class="delete-comment-btn" data-thread-id="${thread.id}" data-comment-id="${comment.id}">Delete</button>
         </div>
       `;
       
@@ -582,6 +586,24 @@ function renderCommentList() {
       const threadId = this.dataset.threadId;
       activeHighlightId = comments[threadId].highlightId;
       showCommentDialog(threadId);
+    });
+  });
+  
+  // Add delete comment button listeners
+  document.querySelectorAll('.delete-comment-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const threadId = this.dataset.threadId;
+      const commentId = this.dataset.commentId;
+      deleteComment(threadId, commentId);
+    });
+  });
+  
+  // Add delete thread button listeners
+  document.querySelectorAll('.delete-thread-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const threadId = this.dataset.threadId;
+      deleteThread(threadId);
     });
   });
 }
@@ -616,6 +638,48 @@ function saveComments() {
     allComments[fileUrl] = comments;
     chrome.storage.local.set({ comments: allComments });
   });
+}
+
+function deleteComment(threadId, commentId) {
+  if (confirm('Are you sure you want to delete this comment?')) {
+    const thread = comments[threadId];
+    if (thread) {
+      // Find and remove the comment
+      const commentIndex = thread.comments.findIndex(c => c.id === commentId);
+      if (commentIndex !== -1) {
+        thread.comments.splice(commentIndex, 1);
+        
+        // If this was the last comment, delete the entire thread
+        if (thread.comments.length === 0) {
+          deleteThread(threadId);
+        } else {
+          // Save and re-render
+          saveComments();
+          renderCommentList();
+        }
+      }
+    }
+  }
+}
+
+function deleteThread(threadId) {
+  if (confirm('Are you sure you want to delete this entire thread?')) {
+    const thread = comments[threadId];
+    if (thread) {
+      // Remove the highlight from the page
+      const highlight = document.getElementById(thread.highlightId);
+      if (highlight) {
+        highlight.remove();
+      }
+      
+      // Delete the thread from comments
+      delete comments[threadId];
+      
+      // Save and re-render
+      saveComments();
+      renderCommentList();
+    }
+  }
 }
 
 // Helper function to escape HTML

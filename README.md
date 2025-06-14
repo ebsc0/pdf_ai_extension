@@ -21,6 +21,7 @@ A Chrome extension that allows you to view PDF files with integrated AI capabili
 - **Context-Aware**: AI understands highlighted text and comment threads
 - **Multiple Models**: Support for latest Gemini models including 2.5 preview versions
 - **HTML Rendering**: AI responses support formatted text, lists, code blocks, and more
+- **Comment Management**: Delete individual comments or entire threads with confirmation
 
 ## Installation
 
@@ -53,6 +54,12 @@ Once installed, the extension will automatically handle PDF files:
 2. Click "Add Comment" to start a comment thread
 3. Type `@gemini` followed by your question to get AI assistance
 4. AI will respond with context from the highlighted text and thread history
+
+### Managing Comments
+- **Delete Individual Comments**: Click the "Delete" button on any comment
+- **Delete Entire Thread**: Click the × button in the thread header
+- **Confirmation**: Both actions require confirmation before deletion
+- **Automatic Cleanup**: Deleting the last comment removes the entire thread and highlight
 
 ## Architecture
 

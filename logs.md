@@ -162,3 +162,25 @@
 - Updated all page titles to reflect new branding
 - Rewrote README.md with comprehensive feature documentation
 - Emphasized AI capabilities in description and documentation
+
+### Delete Comment Feature
+- Added delete functionality for individual comments and entire threads
+- Individual comment deletion:
+  - Delete button added to each comment
+  - Confirmation dialog before deletion
+  - If last comment in thread is deleted, entire thread is removed
+  - Updates storage and re-renders comment list
+- Thread deletion:
+  - Delete button (×) added to comment thread headers
+  - Deletes all comments in the thread
+  - Removes highlight from PDF page
+  - Confirmation dialog before deletion
+- UI improvements:
+  - Delete buttons styled to be subtle by default
+  - Red color on hover for clear indication
+  - Thread delete button positioned on right side of header
+  - Individual comment delete buttons appear next to reply button
+- Proper cleanup:
+  - Highlights removed from page when thread deleted
+  - Storage updated to persist deletion
+  - Comment list re-rendered after any deletion
