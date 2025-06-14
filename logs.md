@@ -81,3 +81,23 @@
 - Usage tracking with daily and total request counters
 - Test connection feature to validate API key
 - Special styling for AI-generated comments
+- HTML rendering enabled for AI responses with sanitization
+- Support for formatted text, lists, code blocks, tables, and links
+- Safe HTML sanitization to prevent XSS attacks
+- Enhanced styling for all HTML elements in AI responses
+
+### HTML Rendering for AI Responses
+- Implemented sanitizeHtml() function to safely process HTML from Gemini API
+- Modified comment rendering to display HTML for AI responses while escaping regular comments
+- Added comprehensive CSS styling for HTML elements in AI comments:
+  - Headings (h1-h6) with proper sizing
+  - Paragraphs with appropriate spacing
+  - Lists (ordered and unordered) with proper indentation
+  - Code blocks with background highlighting
+  - Tables with borders and header styling
+  - Links with blue color and hover effects
+  - Text formatting (bold, italic, underline)
+  - Blockquotes with left border styling
+- Allowed safe HTML tags while removing dangerous elements (script, style, iframe, etc.)
+- Removed event handlers and dangerous attributes for security
+- Links automatically open in new tabs with security attributes

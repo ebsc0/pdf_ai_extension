@@ -416,9 +416,12 @@ function renderCommentList() {
         metaText += ' • Generating response...';
       }
       
+      // Render HTML for AI responses, escape for regular comments
+      const commentText = comment.isAIResponse ? sanitizeHtml(comment.text) : escapeHtml(comment.text);
+      
       commentDiv.innerHTML = `
         <div class="comment-meta">${metaText}</div>
-        <div class="comment-text">${escapeHtml(comment.text)}</div>
+        <div class="comment-text">${commentText}</div>
         <div class="comment-actions">
           ${!comment.isAIResponse ? `<button class="reply-btn" data-thread-id="${thread.id}">Reply</button>` : ''}
         </div>
@@ -487,6 +490,79 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// Sanitize HTML for AI responses (allow safe tags)
+function sanitizeHtml(html) {
+  // Create a temporary container
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  
+  // Define allowed tags
+  const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'code', 'pre', 
+                      'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                      'a', 'span', 'div', 'table', 'tr', 'td', 'th', 'thead', 'tbody'];
+  
+  // Define allowed attributes
+  const allowedAttributes = {
+    'a': ['href', 'target', 'rel'],
+    'code': ['class'],
+    'pre': ['class'],
+    'span': ['class'],
+    'div': ['class']
+  };
+  
+  // Recursively clean nodes
+  function cleanNode(node) {
+    // Remove script and style tags entirely
+    const dangerousTags = node.querySelectorAll('script, style, iframe, object, embed, form');
+    dangerousTags.forEach(tag => tag.remove());
+    
+    // Process all elements
+    const allElements = node.getElementsByTagName('*');
+    for (let i = allElements.length - 1; i >= 0; i--) {
+      const element = allElements[i];
+      const tagName = element.tagName.toLowerCase();
+      
+      // Remove if not in allowed tags
+      if (!allowedTags.includes(tagName)) {
+        // Keep the text content but remove the tag
+        const parent = element.parentNode;
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+        continue;
+      }
+      
+      // Remove dangerous attributes
+      const attributes = Array.from(element.attributes);
+      attributes.forEach(attr => {
+        const attrName = attr.name.toLowerCase();
+        
+        // Remove event handlers and dangerous attributes
+        if (attrName.startsWith('on') || attrName === 'style') {
+          element.removeAttribute(attr.name);
+          return;
+        }
+        
+        // Check if attribute is allowed for this tag
+        const allowedAttrs = allowedAttributes[tagName] || [];
+        if (!allowedAttrs.includes(attrName)) {
+          element.removeAttribute(attr.name);
+        }
+      });
+      
+      // Special handling for links
+      if (tagName === 'a') {
+        element.setAttribute('target', '_blank');
+        element.setAttribute('rel', 'noopener noreferrer');
+      }
+    }
+  }
+  
+  cleanNode(temp);
+  return temp.innerHTML;
 }
 
 // Update renderPage to also render highlights

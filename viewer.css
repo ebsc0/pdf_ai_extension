@@ -387,3 +387,116 @@ body {
   background-color: #45a049;
   transform: scale(1.1);
 }
+
+/* HTML content styling for AI responses */
+.comment-item.ai-response .comment-text {
+  line-height: 1.5;
+}
+
+.comment-item.ai-response .comment-text p {
+  margin: 0.5em 0;
+}
+
+.comment-item.ai-response .comment-text p:first-child {
+  margin-top: 0;
+}
+
+.comment-item.ai-response .comment-text p:last-child {
+  margin-bottom: 0;
+}
+
+.comment-item.ai-response .comment-text h1,
+.comment-item.ai-response .comment-text h2,
+.comment-item.ai-response .comment-text h3,
+.comment-item.ai-response .comment-text h4,
+.comment-item.ai-response .comment-text h5,
+.comment-item.ai-response .comment-text h6 {
+  margin: 0.5em 0;
+  font-weight: bold;
+}
+
+.comment-item.ai-response .comment-text h1 { font-size: 1.4em; }
+.comment-item.ai-response .comment-text h2 { font-size: 1.3em; }
+.comment-item.ai-response .comment-text h3 { font-size: 1.2em; }
+.comment-item.ai-response .comment-text h4 { font-size: 1.1em; }
+.comment-item.ai-response .comment-text h5 { font-size: 1.05em; }
+.comment-item.ai-response .comment-text h6 { font-size: 1em; }
+
+.comment-item.ai-response .comment-text ul,
+.comment-item.ai-response .comment-text ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.comment-item.ai-response .comment-text li {
+  margin: 0.25em 0;
+}
+
+.comment-item.ai-response .comment-text code {
+  background-color: #f4f4f4;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.comment-item.ai-response .comment-text pre {
+  background-color: #f4f4f4;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+.comment-item.ai-response .comment-text pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.comment-item.ai-response .comment-text blockquote {
+  border-left: 3px solid #ccc;
+  margin: 0.5em 0;
+  padding-left: 1em;
+  color: #666;
+}
+
+.comment-item.ai-response .comment-text a {
+  color: #2196F3;
+  text-decoration: underline;
+}
+
+.comment-item.ai-response .comment-text a:hover {
+  color: #1976D2;
+}
+
+.comment-item.ai-response .comment-text table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5em 0;
+}
+
+.comment-item.ai-response .comment-text table th,
+.comment-item.ai-response .comment-text table td {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+  text-align: left;
+}
+
+.comment-item.ai-response .comment-text table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.comment-item.ai-response .comment-text strong,
+.comment-item.ai-response .comment-text b {
+  font-weight: bold;
+}
+
+.comment-item.ai-response .comment-text em,
+.comment-item.ai-response .comment-text i {
+  font-style: italic;
+}
+
+.comment-item.ai-response .comment-text u {
+  text-decoration: underline;
+}
