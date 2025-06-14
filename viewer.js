@@ -1113,16 +1113,35 @@ function handleKeyboardShortcuts(e) {
 }
 
 const urlParams = new URLSearchParams(window.location.search);
-const fileUrl = urlParams.get('file');
+let fileUrl = urlParams.get('file');
 
 if (fileUrl) {
-  pdfjsLib.getDocument(fileUrl).promise.then(function(pdfDoc_) {
+  // Automatically upgrade HTTP to HTTPS to avoid mixed content issues
+  if (fileUrl.startsWith('http://')) {
+    console.warn('Upgrading HTTP URL to HTTPS:', fileUrl);
+    fileUrl = fileUrl.replace('http://', 'https://');
+  }
+  
+  // Configure PDF.js to handle CORS and mixed content
+  const loadingTask = pdfjsLib.getDocument({
+    url: fileUrl,
+    withCredentials: false,
+    isEvalSupported: false,
+    disableAutoFetch: false
+  });
+  
+  loadingTask.promise.then(function(pdfDoc_) {
     pdfDoc = pdfDoc_;
     document.getElementById('page-count').textContent = pdfDoc.numPages;
     renderPage(pageNum);
     initCommentSystem();
   }).catch(function(error) {
     console.error('Error loading PDF:', error);
-    alert('Error loading PDF: ' + error.message);
+    // If HTTPS fails, provide more helpful error message
+    if (fileUrl.startsWith('https://') && error.message.includes('Failed to fetch')) {
+      alert('Error loading PDF: The server may not support HTTPS. Please check if the PDF is accessible at: ' + fileUrl);
+    } else {
+      alert('Error loading PDF: ' + error.message);
+    }
   });
 }

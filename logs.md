@@ -184,3 +184,11 @@
   - Highlights removed from page when thread deleted
   - Storage updated to persist deletion
   - Comment list re-rendered after any deletion
+
+### Fix Insecure Connection Errors
+- Automatically upgrade HTTP PDF URLs to HTTPS in viewer.js
+- Added Content-Security-Policy meta tag with upgrade-insecure-requests
+- Enhanced PDF.js configuration with proper CORS settings
+- Improved error handling with specific messages for HTTPS failures
+- Added viewport meta tag for better responsive behavior
+- Log warnings when upgrading HTTP to HTTPS for debugging
