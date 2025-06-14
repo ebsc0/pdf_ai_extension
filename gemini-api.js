@@ -4,6 +4,9 @@ class GeminiAPI {
     this.apiKey = apiKey;
     this.model = model;
     this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+    
+    // Log the model being used for debugging
+    console.log('Initializing GeminiAPI with model:', model);
   }
   
   async generateContent(prompt, options = {}) {
@@ -41,34 +44,56 @@ class GeminiAPI {
     };
     
     try {
-      const response = await fetch(
-        `${this.baseUrl}/${this.model}:generateContent?key=${this.apiKey}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody)
-        }
-      );
+      const url = `${this.baseUrl}/${this.model}:generateContent?key=${this.apiKey}`;
+      console.log('Making request to:', url.replace(this.apiKey, '[REDACTED]'));
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
       
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || `API error: ${response.status}`);
+        let errorMessage = `API error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error.message || errorData.error.status || errorMessage;
+            console.error('API Error details:', errorData.error);
+          }
+        } catch (e) {
+          // If we can't parse the error response, use the status text
+          errorMessage = `API error: ${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
       
       const data = await response.json();
+      console.log('Gemini API response:', JSON.stringify(data, null, 2));
       
-      if (data.candidates && data.candidates.length > 0) {
-        const content = data.candidates[0].content.parts[0].text;
-        return {
-          success: true,
-          content: content,
-          usage: data.usageMetadata
-        };
-      } else {
-        throw new Error('No response generated');
+      // Check if the response has the expected structure
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error('No response generated from Gemini API');
       }
+      
+      const candidate = data.candidates[0];
+      if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+        throw new Error('Invalid response structure from Gemini API');
+      }
+      
+      const content = candidate.content.parts[0].text;
+      if (!content) {
+        throw new Error('No text content in Gemini API response');
+      }
+      
+      return {
+        success: true,
+        content: content,
+        usage: data.usageMetadata
+      };
     } catch (error) {
       return {
         success: false,

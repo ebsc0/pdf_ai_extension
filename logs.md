@@ -192,3 +192,16 @@
 - Improved error handling with specific messages for HTTPS failures
 - Added viewport meta tag for better responsive behavior
 - Log warnings when upgrading HTTP to HTTPS for debugging
+
+### Fix Gemini API Error
+- Fixed "Cannot read properties of undefined (reading '0')" error
+- Added comprehensive error checking for API response structure
+- Added detailed logging for debugging API requests and responses
+- Improved error messages to identify specific issues:
+  - Missing candidates array
+  - Invalid response structure
+  - Empty content parts
+  - No text content
+- Enhanced error handling in background.js with better logging
+- Added model name logging to debug potential model name issues
+- Better error propagation from API to user interface

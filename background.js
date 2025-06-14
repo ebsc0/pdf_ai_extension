@@ -60,6 +60,12 @@ async function handleGenerateResponse(request, sendResponse) {
       return;
     }
     
+    console.log('Using Gemini settings:', {
+      model: geminiSettings.model,
+      includeContext: geminiSettings.includeContext,
+      includeThread: geminiSettings.includeThread
+    });
+    
     const api = new GeminiAPI(geminiSettings.apiKey, geminiSettings.model);
     
     // Prepare options
@@ -78,7 +84,8 @@ async function handleGenerateResponse(request, sendResponse) {
     
     sendResponse(result);
   } catch (error) {
-    sendResponse({ success: false, error: error.message });
+    console.error('Error in handleGenerateResponse:', error);
+    sendResponse({ success: false, error: error.message || 'Unknown error occurred' });
   }
 }
 
