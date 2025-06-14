@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "PDF.js Viewer",
+  "name": "PDF AI",
   "version": "1.0",
-  "description": "View PDF files using PDF.js",
+  "description": "View PDF files using AI",
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
@@ -17,7 +22,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "PDF.js Viewer",
+    "default_title": "PDF AI",
     "default_popup": "settings.html"
   },
   "options_page": "settings.html",

@@ -154,3 +154,11 @@
   - Search, Sidebar toggle, Print, Download
 - Print and download functionality
 - Improved UI with separators and better organization
+
+### Extension Rebranding
+- Renamed extension from "PDF.js Viewer" to "PDF AI"
+- Updated description to "View PDF files using AI"
+- Added icon.png as extension icon in all sizes (16, 48, 128)
+- Updated all page titles to reflect new branding
+- Rewrote README.md with comprehensive feature documentation
+- Emphasized AI capabilities in description and documentation
