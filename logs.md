@@ -123,3 +123,34 @@
 - Fixed dialog remaining open during AI requests
 - Dialog now closes immediately on save, AI processing happens asynchronously
 - Better user experience with immediate visual feedback
+
+### PDF.js Viewer Feature Integration
+- Added search functionality with find bar:
+  - Text search with case-sensitive option
+  - Highlight all matches option
+  - Previous/Next navigation through matches
+  - Match counter display
+  - Keyboard shortcut support (Ctrl/Cmd+F)
+- Implemented page thumbnails sidebar:
+  - Visual page previews
+  - Click to navigate
+  - Active page highlighting
+  - Lazy loading for performance
+- Added document outline/bookmarks sidebar:
+  - Table of contents navigation
+  - Nested outline support
+  - Click to jump to sections
+- Enhanced zoom controls:
+  - Preset zoom levels dropdown
+  - Automatic zoom, Page Fit, Page Width options
+  - Standard zoom percentages (50% to 400%)
+- Added keyboard shortcuts:
+  - Arrow keys for page navigation
+  - Page Up/Down for navigation
+  - Home/End for first/last page
+  - +/- for zoom control
+  - Escape to close search
+- Added toolbar buttons:
+  - Search, Sidebar toggle, Print, Download
+- Print and download functionality
+- Improved UI with separators and better organization
