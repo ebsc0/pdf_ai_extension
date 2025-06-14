@@ -115,3 +115,11 @@
   - Gemini Pro - Original model
 - Set Gemini 2.5 Flash (Preview 05-20) as default model
 - Models arranged by version and release date
+
+### Improved Comment Dialog UX
+- Hide comment tooltip when "Add Comment" button is clicked
+- Clear text selection after saving comment for better visual feedback
+- Dialog already properly closes on save/cancel as implemented
+- Fixed dialog remaining open during AI requests
+- Dialog now closes immediately on save, AI processing happens asynchronously
+- Better user experience with immediate visual feedback

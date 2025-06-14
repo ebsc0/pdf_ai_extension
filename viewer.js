@@ -133,6 +133,7 @@ function initCommentSystem() {
   // Add comment button
   document.getElementById('add-comment-btn').addEventListener('click', function() {
     showCommentDialog();
+    hideCommentTooltip();
   });
 
   // Comment dialog buttons
@@ -200,7 +201,7 @@ function hideCommentDialog() {
   hideCommentTooltip();
 }
 
-async function saveComment() {
+function saveComment() {
   const commentText = document.getElementById('comment-input').value.trim();
   if (!commentText) return;
   
@@ -234,9 +235,15 @@ async function saveComment() {
     
     window.getSelection().removeAllRanges();
     
-    // Process AI request if needed
+    // Save and update UI immediately
+    saveComments();
+    renderHighlights();
+    renderCommentList();
+    hideCommentDialog();
+    
+    // Process AI request after UI updates
     if (isAIRequest) {
-      await processAIComment(commentId, newComment, selectedText.text);
+      processAIComment(commentId, newComment, selectedText.text);
     }
     
     selectedText = null;
@@ -251,16 +258,17 @@ async function saveComment() {
     
     comments[parentId].comments.push(newComment);
     
-    // Process AI request if needed
+    // Save and update UI immediately
+    saveComments();
+    renderHighlights();
+    renderCommentList();
+    hideCommentDialog();
+    
+    // Process AI request after UI updates
     if (isAIRequest) {
-      await processAIComment(parentId, newComment, comments[parentId].highlightedText);
+      processAIComment(parentId, newComment, comments[parentId].highlightedText);
     }
   }
-  
-  saveComments();
-  renderHighlights();
-  renderCommentList();
-  hideCommentDialog();
 }
 
 async function processAIComment(threadId, comment, context) {
