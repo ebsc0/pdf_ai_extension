@@ -3,7 +3,7 @@ class GeminiAPI {
   constructor(apiKey, model = 'gemini-2.5-flash-preview-05-20') {
     this.apiKey = apiKey;
     this.model = model;
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1/models';
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1';
     
     // Log the model being used for debugging
     console.log('Initializing GeminiAPI with model:', model);
@@ -44,7 +44,7 @@ class GeminiAPI {
     };
     
     try {
-      const url = `${this.baseUrl}/${this.model}:generateContent?key=${this.apiKey}`;
+      const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`;
       console.log('Making request to:', url.replace(this.apiKey, '[REDACTED]'));
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
       
@@ -127,7 +127,7 @@ class GeminiAPI {
   async listModels() {
     try {
       const response = await fetch(
-        `${this.baseUrl}?key=${this.apiKey}`,
+        `${this.baseUrl}/models?key=${this.apiKey}`,
         {
           method: 'GET',
           headers: {
