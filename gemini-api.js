@@ -1,9 +1,9 @@
 // Gemini API integration module
 class GeminiAPI {
-  constructor(apiKey, model = 'gemini-pro') {
+  constructor(apiKey, model = 'gemini-2.5-flash') {
     this.apiKey = apiKey;
     this.model = model;
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1/models';
     
     // Log the model being used for debugging
     console.log('Initializing GeminiAPI with model:', model);
@@ -80,11 +80,17 @@ class GeminiAPI {
       }
       
       const candidate = data.candidates[0];
-      if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+      
+      // Extract text content from the response
+      let content = null;
+      if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+        // v1 API structure
+        content = candidate.content.parts[0].text;
+      } else {
+        console.error('Unexpected response structure:', candidate);
         throw new Error('Invalid response structure from Gemini API');
       }
       
-      const content = candidate.content.parts[0].text;
       if (!content) {
         throw new Error('No text content in Gemini API response');
       }
@@ -92,7 +98,7 @@ class GeminiAPI {
       return {
         success: true,
         content: content,
-        usage: data.usageMetadata
+        usage: data.usageMetadata || {}
       };
     } catch (error) {
       return {

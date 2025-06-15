@@ -205,3 +205,12 @@
 - Enhanced error handling in background.js with better logging
 - Added model name logging to debug potential model name issues
 - Better error propagation from API to user interface
+
+### Migrate to Gemini API v1 with 2.5 Models
+- Updated API endpoint from v1beta to v1
+- Simplified model selection to only Gemini 2.5 models:
+  - gemini-2.5-flash (default)
+  - gemini-2.5-pro
+- Updated response parsing for v1 API structure
+- Removed deprecated and experimental model options
+- Changed default model to gemini-2.5-flash
