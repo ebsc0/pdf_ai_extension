@@ -220,3 +220,10 @@
 - Removed "models/" prefix from API calls
 - Simplified to single 2.5 Flash preview model
 - Fixed "model not found" error by using correct model identifier
+
+### Update API to Match Google GenAI Structure
+- Changed API endpoint to /models:generateContent (generic endpoint)
+- Moved model specification from URL to request body
+- Now matches Google GenAI client library structure
+- Allows use of preview models like gemini-2.5-flash-preview-05-20
+- Fixed API calls to work with latest Gemini API format

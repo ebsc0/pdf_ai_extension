@@ -30,6 +30,7 @@ class GeminiAPI {
     fullPrompt += `User question: ${prompt}`;
     
     const requestBody = {
+      model: this.model,
       contents: [{
         parts: [{
           text: fullPrompt
@@ -44,7 +45,7 @@ class GeminiAPI {
     };
     
     try {
-      const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`;
+      const url = `${this.baseUrl}/models:generateContent?key=${this.apiKey}`;
       console.log('Making request to:', url.replace(this.apiKey, '[REDACTED]'));
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
       
