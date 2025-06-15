@@ -1,6 +1,6 @@
 // Gemini API integration module
 class GeminiAPI {
-  constructor(apiKey, model = 'gemini-2.5-flash') {
+  constructor(apiKey, model = 'gemini-2.5-flash-preview-05-20') {
     this.apiKey = apiKey;
     this.model = model;
     this.baseUrl = 'https://generativelanguage.googleapis.com/v1/models';
@@ -137,17 +137,26 @@ class GeminiAPI {
       );
       
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || `API error: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log('Available models from API:', JSON.stringify(data, null, 2));
+      
+      // Filter models that support generateContent
+      const supportedModels = data.models.filter(model => 
+        model.supportedGenerationMethods && 
+        model.supportedGenerationMethods.includes('generateContent')
+      );
+      
       return {
         success: true,
-        models: data.models.filter(model => 
-          model.supportedGenerationMethods.includes('generateContent')
-        )
+        models: supportedModels,
+        rawData: data
       };
     } catch (error) {
+      console.error('Error listing models:', error);
       return {
         success: false,
         error: error.message

@@ -214,3 +214,9 @@
 - Updated response parsing for v1 API structure
 - Removed deprecated and experimental model options
 - Changed default model to gemini-2.5-flash
+
+### Fix Model Name Format
+- Updated to use exact model name: gemini-2.5-flash-preview-05-20
+- Removed "models/" prefix from API calls
+- Simplified to single 2.5 Flash preview model
+- Fixed "model not found" error by using correct model identifier
