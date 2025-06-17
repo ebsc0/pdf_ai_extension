@@ -111,7 +111,7 @@ function clearAllData() {
     chrome.storage.local.remove(['geminiSettings', 'geminiUsage'], function() {
       showStatus('All data cleared', 'success');
       document.getElementById('api-key').value = '';
-      document.getElementById('model-select').value = 'gemini-2.5-flash-preview-05-20';
+      document.getElementById('model-select').value = 'gemini-2.0-flash-001';
       document.getElementById('include-context').checked = true;
       document.getElementById('include-thread').checked = false;
       updateUsageStats();

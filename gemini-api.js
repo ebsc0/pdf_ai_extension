@@ -1,9 +1,9 @@
 // Gemini API integration module
 class GeminiAPI {
-  constructor(apiKey, model = 'gemini-2.5-flash-preview-05-20') {
+  constructor(apiKey, model = 'gemini-2.0-flash-001') {
     this.apiKey = apiKey;
     this.model = model;
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1';
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
     
     // Log the model being used for debugging
     console.log('Initializing GeminiAPI with model:', model);
@@ -30,7 +30,6 @@ class GeminiAPI {
     fullPrompt += `User question: ${prompt}`;
     
     const requestBody = {
-      model: this.model,
       contents: [{
         parts: [{
           text: fullPrompt
@@ -45,7 +44,7 @@ class GeminiAPI {
     };
     
     try {
-      const url = `${this.baseUrl}/models:generateContent?key=${this.apiKey}`;
+      const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`;
       console.log('Making request to:', url.replace(this.apiKey, '[REDACTED]'));
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
       
@@ -117,47 +116,6 @@ class GeminiAPI {
       
       return response;
     } catch (error) {
-      return {
-        success: false,
-        error: error.message
-      };
-    }
-  }
-  
-  // Get available models
-  async listModels() {
-    try {
-      const response = await fetch(
-        `${this.baseUrl}/models?key=${this.apiKey}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || `API error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('Available models from API:', JSON.stringify(data, null, 2));
-      
-      // Filter models that support generateContent
-      const supportedModels = data.models.filter(model => 
-        model.supportedGenerationMethods && 
-        model.supportedGenerationMethods.includes('generateContent')
-      );
-      
-      return {
-        success: true,
-        models: supportedModels,
-        rawData: data
-      };
-    } catch (error) {
-      console.error('Error listing models:', error);
       return {
         success: false,
         error: error.message
